@@ -5,14 +5,15 @@
  */
 package gui;
 
+import core.Core;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
 /**
  *
  * @author bruno
@@ -23,6 +24,7 @@ public class App extends javax.swing.JFrame {
      * Creates new form App
      */
     public App() {
+        setTitle("Identificador de Personalidade!");
         initComponents();
     }
 
@@ -37,10 +39,10 @@ public class App extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         button = new javax.swing.JButton();
+        probLabel = new javax.swing.JLabel();
+        results = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setText("image");
 
         button.setText("Selecionar Arquivo");
         button.addActionListener(new java.awt.event.ActionListener() {
@@ -49,27 +51,39 @@ public class App extends javax.swing.JFrame {
             }
         });
 
+        probLabel.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
+        probLabel.setText("Probabilidades");
+        probLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        results.setFont(new java.awt.Font("Ubuntu Light", 0, 14)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(results, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(button, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(probLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(button)
-                .addContainerGap(145, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(probLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(results, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -82,12 +96,18 @@ public class App extends javax.swing.JFrame {
 
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            BufferedImage bi;
-            try {   //display the image in jlabel
-                bi = ImageIO.read(file);
-                jLabel1.setIcon(new ImageIcon(bi));
+            
+            try {
+                BufferedImage bi = ImageIO.read(file);
+                jLabel1.setIcon(new ImageIcon(bi.getScaledInstance(339, 292, 100)));
+
+                Core core = new Core(fileChooser.getSelectedFile());
+                results.setText("");
+                results.setText("<html>" + core.run() + "</html>");
             } catch (IOException e) {
 
+            } catch (Exception ex) {
+                Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
             }
             this.pack();
         }
@@ -104,7 +124,7 @@ public class App extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Metal".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -131,5 +151,7 @@ public class App extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel probLabel;
+    private javax.swing.JLabel results;
     // End of variables declaration//GEN-END:variables
 }
